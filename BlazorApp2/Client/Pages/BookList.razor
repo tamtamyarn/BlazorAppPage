@@ -1,0 +1,38 @@
+﻿@page "/booklist"
+@using BlazorApp2.Shared.Wrappers
+@inject HttpClient Http
+
+@if (books == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <p>
+        <Table DataSource="@books.Books" PageSize="@pageSize" HidePagination="true">
+            <Column @bind-Field="@context.BookId"></Column>
+            <Column @bind-Field="@context.Title"></Column>
+            <Column @bind-Field="@context.Author"></Column>
+        </Table>
+    </p>
+
+    <p><Pagination @bind-PageIndex="@pageNumber" PageSize="@pageSize" Total="@books.TotalRecords" OnPageIndexChange="@MoveToPage"></Pagination></p>
+}
+
+@code {
+    private PagedBooks books;
+
+    private int pageNumber = 1;
+
+    private int pageSize = 10;
+
+    protected override async Task OnInitializedAsync()
+    {
+        books = await Http.GetFromJsonAsync<PagedBooks>($"api/Books?pageNumber={pageNumber}&pageSize={pageSize}");
+    }
+
+    private async Task MoveToPage()
+    {
+        books = await Http.GetFromJsonAsync<PagedBooks>($"api/Books?pageNumber={pageNumber}&pageSize={pageSize}");
+    }
+}
