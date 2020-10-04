@@ -11,21 +11,21 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th @onclick="@SortById" style="cursor: pointer;">
+                <th @onclick="@(() => SortBy("ID"))" style="cursor: pointer;">
                     ID
                     @if (sortBy == "ID")
                     {
                         <Icon Type="arrow-down" Theme="outline" />
                     }
                 </th>
-                <th @onclick="@SortByTitle" style="cursor: pointer;">
+                <th @onclick="@(() => SortBy("Title"))" style="cursor: pointer;">
                     Title
                     @if (sortBy == "Title")
                     {
                         <Icon Type="arrow-down" Theme="outline" />
                     }
                 </th>
-                <th @onclick="@SortByAuthor" style="cursor: pointer;">
+                <th @onclick="@(() => SortBy("Author"))" style="cursor: pointer;">
                     Author
                     @if (sortBy == "Author")
                     {
@@ -46,7 +46,7 @@ else
         </tbody>
     </table>
 
-    <p><Pagination @bind-PageIndex="@pageNumber" PageSize="@pageSize" Total="@books.TotalRecords" OnPageIndexChange="@MoveToPage"></Pagination></p>
+    <p><Pagination @bind-PageIndex="@pageNumber" PageSize="@pageSize" Total="@books.TotalRecords" OnPageIndexChange="@UpdateBookListAsync"></Pagination></p>
 }
 
 @code {
@@ -60,29 +60,17 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        books = await Http.GetFromJsonAsync<PagedBooks>($"api/Books?pageNumber={pageNumber}&pageSize={pageSize}&sortBy={sortBy}");
+        await UpdateBookListAsync();
     }
 
-    private async Task MoveToPage()
+    private async Task SortBy(string sort)
     {
-        books = await Http.GetFromJsonAsync<PagedBooks>($"api/Books?pageNumber={pageNumber}&pageSize={pageSize}&sortBy={sortBy}");
+        sortBy = sort;
+        await UpdateBookListAsync();
     }
 
-    private async Task SortByTitle()
+    private async Task UpdateBookListAsync()
     {
-        sortBy = "Title";
-        books = await Http.GetFromJsonAsync<PagedBooks>($"api/Books?pageNumber={pageNumber}&pageSize={pageSize}&sortBy={sortBy}");
-    }
-
-    private async Task SortByAuthor()
-    {
-        sortBy = "Author";
-        books = await Http.GetFromJsonAsync<PagedBooks>($"api/Books?pageNumber={pageNumber}&pageSize={pageSize}&sortBy={sortBy}");
-    }
-
-    private async Task SortById()
-    {
-        sortBy = "ID";
         books = await Http.GetFromJsonAsync<PagedBooks>($"api/Books?pageNumber={pageNumber}&pageSize={pageSize}&sortBy={sortBy}");
     }
 }
