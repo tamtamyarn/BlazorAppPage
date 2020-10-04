@@ -17,6 +17,10 @@ else
                     {
                         <Icon Type="arrow-down" Theme="outline" />
                     }
+                    @if (sortBy == "ID_Desc")
+                    {
+                        <Icon Type="arrow-up" Theme="outline" />
+                    }
                 </th>
                 <th @onclick="@(() => SortBy("Title"))" style="cursor: pointer;">
                     Title
@@ -24,12 +28,20 @@ else
                     {
                         <Icon Type="arrow-down" Theme="outline" />
                     }
+                    @if (sortBy == "Title_Desc")
+                    {
+                        <Icon Type="arrow-up" Theme="outline" />
+                    }
                 </th>
                 <th @onclick="@(() => SortBy("Author"))" style="cursor: pointer;">
                     Author
                     @if (sortBy == "Author")
                     {
                         <Icon Type="arrow-down" Theme="outline" />
+                    }
+                    @if (sortBy == "Author_Desc")
+                    {
+                        <Icon Type="arrow-up" Theme="outline" />
                     }
                 </th>
             </tr>
@@ -65,7 +77,42 @@ else
 
     private async Task SortBy(string sort)
     {
-        sortBy = sort;
+        if (sortBy == sort)
+        {
+            switch (sortBy)
+            {
+                case "ID":
+                    sortBy = "ID_Desc";
+                    break;
+
+                case "ID_Desc":
+                    sortBy = "ID";
+                    break;
+
+                case "Title":
+                    sortBy = "Title_Desc";
+                    break;
+
+                case "Title_Desc":
+                    sortBy = "Title";
+                    break;
+
+                case "Author":
+                    sortBy = "Author_Desc";
+                    break;
+
+                case "Author_Desc":
+                    sortBy = "Author";
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            sortBy = sort;
+        }
         await UpdateBookListAsync();
     }
 
