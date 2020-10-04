@@ -8,13 +8,43 @@
 }
 else
 {
-    <p>
-        <Table DataSource="@books.Books" PageSize="@pageSize" HidePagination="true">
-            <Column @bind-Field="@context.BookId"></Column>
-            <Column @bind-Field="@context.Title"></Column>
-            <Column @bind-Field="@context.Author"></Column>
-        </Table>
-    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th @onclick="@SortById" style="cursor: pointer;">
+                    ID
+                    @if (sortBy == "ID")
+                    {
+                        <Icon Type="arrow-down" Theme="outline" />
+                    }
+                </th>
+                <th @onclick="@SortByTitle" style="cursor: pointer;">
+                    Title
+                    @if (sortBy == "Title")
+                    {
+                        <Icon Type="arrow-down" Theme="outline" />
+                    }
+                </th>
+                <th @onclick="@SortByAuthor" style="cursor: pointer;">
+                    Author
+                    @if (sortBy == "Author")
+                    {
+                        <Icon Type="arrow-down" Theme="outline" />
+                    }
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in books.Books)
+            {
+                <tr>
+                    <td>@book.BookId</td>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
     <p><Pagination @bind-PageIndex="@pageNumber" PageSize="@pageSize" Total="@books.TotalRecords" OnPageIndexChange="@MoveToPage"></Pagination></p>
 }
@@ -26,13 +56,33 @@ else
 
     private int pageSize = 10;
 
+    private string sortBy = "ID";
+
     protected override async Task OnInitializedAsync()
     {
-        books = await Http.GetFromJsonAsync<PagedBooks>($"api/Books?pageNumber={pageNumber}&pageSize={pageSize}");
+        books = await Http.GetFromJsonAsync<PagedBooks>($"api/Books?pageNumber={pageNumber}&pageSize={pageSize}&sortBy={sortBy}");
     }
 
     private async Task MoveToPage()
     {
-        books = await Http.GetFromJsonAsync<PagedBooks>($"api/Books?pageNumber={pageNumber}&pageSize={pageSize}");
+        books = await Http.GetFromJsonAsync<PagedBooks>($"api/Books?pageNumber={pageNumber}&pageSize={pageSize}&sortBy={sortBy}");
+    }
+
+    private async Task SortByTitle()
+    {
+        sortBy = "Title";
+        books = await Http.GetFromJsonAsync<PagedBooks>($"api/Books?pageNumber={pageNumber}&pageSize={pageSize}&sortBy={sortBy}");
+    }
+
+    private async Task SortByAuthor()
+    {
+        sortBy = "Author";
+        books = await Http.GetFromJsonAsync<PagedBooks>($"api/Books?pageNumber={pageNumber}&pageSize={pageSize}&sortBy={sortBy}");
+    }
+
+    private async Task SortById()
+    {
+        sortBy = "ID";
+        books = await Http.GetFromJsonAsync<PagedBooks>($"api/Books?pageNumber={pageNumber}&pageSize={pageSize}&sortBy={sortBy}");
     }
 }
