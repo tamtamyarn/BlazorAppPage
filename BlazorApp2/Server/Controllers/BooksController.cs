@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using BlazorApp2.Server.Data;
+using BlazorApp2.Server.Extensions;
 using BlazorApp2.Shared.Entities;
 using BlazorApp2.Shared.Filters;
 using BlazorApp2.Shared.Wrappers;
@@ -25,6 +26,7 @@ namespace BlazorApp2.Server.Controllers
         {
             var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize, filter.SortBy);
 
+            /*
             IQueryable<Book> booksIQ = context.Books;
 
             booksIQ = validFilter.SortBy switch
@@ -39,6 +41,13 @@ namespace BlazorApp2.Server.Controllers
             };
 
             var books = await booksIQ
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToListAsync();
+            */
+
+            var books = await context.Books
+                .OrderBooksBy(validFilter.SortBy)
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToListAsync();
